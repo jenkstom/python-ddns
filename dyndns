@@ -1,0 +1,36 @@
+#!/usr/bin/python
+import cgitb
+import cgi
+import zlib
+import sh
+import os
+
+cgitb.enable()
+print "Content-type: text/plain\n\n";
+params = cgi.parse()
+name, key, ipi = params.get('name'), params.get('key'), params.get('ip')
+if ipi:
+  ip = ipi[0]
+else:
+  ip = os.environ["REMOTE_ADDR"]
+
+if name and key:
+  if str(zlib.adler32(name[0].upper(),1234))==key[0]:
+    #dnsname = sheerdns.mk_A(name[0],ip[0])
+    f=open("/tmp/nsupdate",'w')
+    f.write("server mydomain.com\n")
+    f.write("zone mydomain.com\n")
+    f.write("update delete "+name[0]+".mydomain.com. A\n")
+    f.write("update add "+name[0]+".mydomain.com. 3600 A "+ip+"\n")
+    f.write("show\n")
+    f.write("send\n")
+    f.close()
+    run = sh.nsupdate("-k","/etc/dyndns/Kdynamic.mydomain.com.+157+06067.key",
+      "-v","/tmp/nsupdate")
+    #print run
+    if run.exit_code==0:
+      print "Updated "+name[0]+".mydomain.com to "+ip
+    else:
+      print "nsupdate failed"
+  else:
+    print "Invalid key"
