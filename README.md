@@ -45,7 +45,12 @@ python-ddns
 
         include "/etc/bind/mydomain.com.keys.conf";
 
-7.  Create the cgi script in /usr/lib/cgi-bin/dyndns, or wherever your apache configuration puts the cgi-bin folder at. The package "sh" might not be installed. Go to http://www.pip-installer.org to install pip, and install sh with "sudo pip install sh". You can rewrite it to use os.system if you prefer.
+7. Bind needs to be able to write to the zone files. You may need to update permissions if you are storing your zone files in /etc/bind.
+
+        sudo chown root.bind /etc/bind
+        sudo chown 775 /etc/bind
+
+8. Create the cgi script in /usr/lib/cgi-bin/dyndns, or wherever your apache configuration puts the cgi-bin folder at. The package "sh" might not be installed. Go to http://www.pip-installer.org to install pip, and install sh with "sudo pip install sh". You can rewrite it to use os.system if you prefer.
 
  Change the 1234 in the "adler32" function to some random number that only you know. It needs to match the number in the next step. This is just a secret used to verify the hash key and allow updates.
 
@@ -54,7 +59,7 @@ python-ddns
         sudo chown root.www-data /usr/lib/cgi-bin/dyndns
         sudo chmod 550 /usr/lib/cgi-bin/dyndns
 
-8. You'll need python, and you may need to install some modules with pip
+9. You'll need python, and you may need to install some modules with pip
 
         sudo apt-get install python
 
@@ -67,20 +72,20 @@ python-ddns
         sudo apt-get install python-pip
         sudo pip install sh
 
-9. Create getddkey in /usr/local/bin. Change the 1234 to some random number that only you know. This needs to match the number you changed in the previous step. Set this as executable
+10. Create getddkey in /usr/local/bin. Change the 1234 to some random number that only you know. This needs to match the number you changed in the previous step. Set this as executable
 
         sudo cp getddkey /usr/local/bin
         sudo chown root.root /usr/local/bin
         sudo chmod +x /usr/local/bin/getddkey
 
-10. You can enable updates for any subdomain, such as x.mydomain.com or home.mydomain.com, by getting the hash key for it. To get the key, run getddkey and pass the subdomain name.
+11. You can enable updates for any subdomain, such as x.mydomain.com or home.mydomain.com, by getting the hash key for it. To get the key, run getddkey and pass the subdomain name.
 
         $ getddkey x
         http://mydomain.com/cgi-bin/dyndns?name=x&key=38472837
 
  (Note that your keys should be different if you changed the 1234 to some other number.)
 
-11. Leave the ip parameter off to use the IP you are calling from:
+12. Leave the ip parameter off to use the IP you are calling from:
 
         http://mydomain.com/cgi-bin/dyndns?name=x&key=38472837&ip=10.0.0.1
 
