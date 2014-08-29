@@ -9,7 +9,7 @@ python-ddns
 
     $ dnssec-keygen -a HMAC-MD5 -b 512 -n USER dynamic.mydomain.com.
 
-This will create two files something like: Kdynamic.mydomain.com.+157+12505.[key|private]
+ This will create two files something like: Kdynamic.mydomain.com.+157+12505.[key|private]
 
 3. Move the files to /etc/dyndns, or anywhere. Set the permissions or ownership so that the web server process can read them.
 
@@ -32,18 +32,18 @@ This will create two files something like: Kdynamic.mydomain.com.+157+12505.[key
 
 7.  Create the cgi script in /usr/lib/cgi-bin/dyndns, or wherever your apache configuration puts the cgi-bin folder at. The package "sh" might not be installed. Go to http://www.pip-installer.org to install pip, and install sh with "sudo pip install sh". You can rewrite it to use os.system if you prefer.
 
-Change the 1234 in the "adler32" function to some random number that only you know. It needs to match the number in the next step. This is just a secret used to verify the hash key and allow updates.
+ Change the 1234 in the "adler32" function to some random number that only you know. It needs to match the number in the next step. This is just a secret used to verify the hash key and allow updates.
 
 
 8. You'll need python, and you may need to install some modules with pip
 
     sudo apt-get install python python-pip
 
-You can try:
+ You can try:
 
     sudo apt-get install python-sh
 
-If that doesn't work you'll have to try:
+ If that doesn't work you'll have to try:
 
     sudo pip install sh
 
@@ -58,7 +58,7 @@ If that doesn't work you'll have to try:
     $ getddkey home
     372508155
 
-(Note that your keys should be different if you changed the 1234 to some other number.)
+ (Note that your keys should be different if you changed the 1234 to some other number.)
 
 11. Now to do updates use URLs like this:
 
@@ -66,4 +66,4 @@ If that doesn't work you'll have to try:
     http://mydomain.com/cgi-bin/dyndns?name=x&key=86639914&ip=10.0.0.1
     http://mydomain.com/cgi-bin/dyndns?name=home&key=372508155
 
-Leave the ip parameter off to use the IP you are calling from. If you have https setup pointing to the same cgi-bin folder you can use that to hide the key.
+ Leave the ip parameter off to use the IP you are calling from. If you have https setup pointing to the same cgi-bin folder you can use that to hide the key.
