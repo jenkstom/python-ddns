@@ -2,4 +2,5 @@
 import zlib
 import sys
 
-print zlib.adler32(sys.argv[1].upper(),1234)
+print "http://mydomain.com/cgi-bin/dyndns?name=%s&key=%s"% \
+  (sys.argv[1],zlib.adler32(sys.argv[1].upper(),1234))
