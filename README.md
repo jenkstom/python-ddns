@@ -5,7 +5,7 @@ python-ddns
 
 1. Needed: linux machine with bind9, python and a web server with a cgi-bin folder setup. This how-to assumes you are using a Debian-based distro such as Debian or Ubuntu.
 
-2. Generate keys needed for nsupdate. Change dynamic.mydomain.com to whatever you want. Making them be the same is easiest.
+2. Generate keys needed for nsupdate. Change dynamic.mydomain.com to whatever you want. Making the domain name and the key name be the same is less confusing.
 
         $ dnssec-keygen -a HMAC-MD5 -b 512 -n USER dynamic.mydomain.com.
 
@@ -69,7 +69,10 @@ python-ddns
 
  If that doesn't work you'll have to try:
 
-        sudo apt-get install python-pip
+        sudo apt-get install python-pip python-sh
+ 
+ If there isn't a python-sh package, install with pip:
+ 
         sudo pip install sh
 
 10. Create getddkey in /usr/local/bin. Change the 1234 to some random number that only you know. This needs to match the number you changed in the previous step. Set this as executable
