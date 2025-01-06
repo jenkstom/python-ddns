@@ -1,6 +1,8 @@
 python-ddns
 ===========
 
+Note 2025-01-06: The code is updated for python 3, but the instructions below are still old... working on it.
+
 ##A simple dynamic DNS howto using BIND9's DNSSEC update system and python.
 
 1. Needed: linux machine with bind9, python and a web server with a cgi-bin folder setup. This how-to assumes you are using a Debian-based distro such as Debian or Ubuntu.
