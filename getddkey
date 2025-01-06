@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import zlib
 import sys
 
-print "http://mydomain.com/cgi-bin/dyndns?name=%s&key=%s"% \
-  (sys.argv[1],zlib.adler32(sys.argv[1].upper(),1234))
+print("http://mydomain.com/cgi-bin/dyndns?name=%s&key=%s" % 
+      (sys.argv[1], zlib.adler32(sys.argv[1].upper().encode('utf-8'), 1234)))
