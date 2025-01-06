@@ -7,14 +7,14 @@ python-ddns
 
 2. Generate keys needed for nsupdate. Change dynamic.mydomain.com to whatever you want. Making the domain name and the key name be the same is less confusing.
 
-        $ dnssec-keygen -a HMAC-MD5 -b 512 -n USER dynamic.mydomain.com.
+        $ dnssec-keygen -a ED25519 -n ZONE dynamic.mydomain.com.
 
  This will create two files something like: Kdynamic.mydomain.com.+157+12505.[key|private]
 
 3. Move the files to /etc/dyndns, or anywhere. Set the permissions or ownership so that the web server process can read them. You could do this:
 
         sudo mkdir /etc/dyndns
-        sudo chown root.www-data /etc/dyndns
+        sudo chown root:www-data /etc/dyndns
         sudo chmod 660 /etc/dyndns
 
 4. In your bind config file (/etc/bind/named.conf.local or wherever you define your mydomain.com zone) add this into the zone definition:
@@ -37,8 +37,8 @@ python-ddns
 5. Create a file in /etc/bind/ called mydomain.com.keys.conf. The secret is from the "private" file created in step 2.
 
         key dynamic.mydomain.com. {
-            algorithm HMAC-MD5;
-            secret "kQQvmdkTk8l6uMYfdnIBn5Ys7uhJFvlqSD73WNzEMX42kYZ4H0cuyykTjHY7mB8N9nnZL0gpA9LJmepPYKaU0g==";
+            algorithm ED25519;
+            secret "xxxxxx==";
         };
 
 6. Somewhere in named.conf.local, also add a line like this:
@@ -47,7 +47,7 @@ python-ddns
 
 7. Bind needs to be able to write to the zone files. You may need to update permissions if you are storing your zone files in /etc/bind.
 
-        sudo chown root.bind /etc/bind
+        sudo chown root:bind /etc/bind
         sudo chown 775 /etc/bind
 
 8. Create the cgi script in /usr/lib/cgi-bin/dyndns, or wherever your apache configuration puts the cgi-bin folder at. The package "sh" might not be installed. Go to http://www.pip-installer.org to install pip, and install sh with "sudo pip install sh". You can rewrite it to use os.system if you prefer.
