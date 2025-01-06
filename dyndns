@@ -4,6 +4,7 @@ import cgi
 import zlib
 import sh
 import os
+import tempfile
 
 cgitb.enable()
 print("Content-type: text/plain\n\n")
@@ -21,21 +22,22 @@ else:
 if name and key:
     name_upper = name[0].upper().encode('utf-8')  # Encode to bytes for zlib.adler32
     if str(zlib.adler32(name_upper, 1234)) == key[0]:
-        with open("/tmp/nsupdate", 'w') as f:
-            f.write("server mydomain.com\n")
-            f.write("zone mydomain.com\n")
-            f.write(f"update delete {name[0]}.mydomain.com. A\n")
-            f.write(f"update add {name[0]}.mydomain.com. 3600 A {ip}\n")
-            f.write("show\n")
-            f.write("send\n")
+        with tempfile.NamedTemporaryFile(mode='w+b', delete=True) as temp_file:
+            file_name = temp_file.name
+            temp_file.write("server mydomain.com\n".encode("utf-8"))
+            temp_file.write("zone mydomain.com\n".encode("utf-8"))
+            temp_file.write(f"update delete {name[0]}.mydomain.com. A\n".encode("utf-8"))
+            temp_file.write(f"update add {name[0]}.mydomain.com. 3600 A {ip}\n".encode("utf-8"))
+            temp_file.write("show\n".encode("utf-8"))
+            temp_file.write("send\n".encode("utf-8"))
 
-        run = sh.nsupdate(
-            "-k", "/etc/dyndns/Kdynamic.mydomain.com.+157+06067.key",
-            "-v", "/tmp/nsupdate"
-        )
-        if run.exit_code == 0:
-            print(f"Updated {name[0]}.mydomain.com to {ip}")
-        else:
-            print("nsupdate failed")
+            run = sh.nsupdate(
+                "-k", "/etc/dyndns/Kdynamic.mydomain.com.+015+28416.key",
+                "-v", file_name
+            )
+            if run.exit_code == 0:
+                print(f"Updated {name[0]}.mydomain.com to {ip}")
+            else:
+                print("nsupdate failed")
     else:
         print("Invalid key")
