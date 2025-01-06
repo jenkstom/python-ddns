@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import cgitb
 import cgi
 import zlib
@@ -6,31 +6,36 @@ import sh
 import os
 
 cgitb.enable()
-print "Content-type: text/plain\n\n";
+print("Content-type: text/plain\n\n")
 params = cgi.parse()
-name, key, ipi = params.get('name'), params.get('key'), params.get('ip')
+
+name = params.get('name')
+key = params.get('key')
+ipi = params.get('ip')
+
 if ipi:
-  ip = ipi[0]
+    ip = ipi[0]
 else:
-  ip = os.environ["REMOTE_ADDR"]
+    ip = os.environ.get("REMOTE_ADDR", "")
 
 if name and key:
-  if str(zlib.adler32(name[0].upper(),1234))==key[0]:
-    #dnsname = sheerdns.mk_A(name[0],ip[0])
-    f=open("/tmp/nsupdate",'w')
-    f.write("server mydomain.com\n")
-    f.write("zone mydomain.com\n")
-    f.write("update delete "+name[0]+".mydomain.com. A\n")
-    f.write("update add "+name[0]+".mydomain.com. 3600 A "+ip+"\n")
-    f.write("show\n")
-    f.write("send\n")
-    f.close()
-    run = sh.nsupdate("-k","/etc/dyndns/Kdynamic.mydomain.com.+157+06067.key",
-      "-v","/tmp/nsupdate")
-    #print run
-    if run.exit_code==0:
-      print "Updated "+name[0]+".mydomain.com to "+ip
+    name_upper = name[0].upper().encode('utf-8')  # Encode to bytes for zlib.adler32
+    if str(zlib.adler32(name_upper, 1234)) == key[0]:
+        with open("/tmp/nsupdate", 'w') as f:
+            f.write("server mydomain.com\n")
+            f.write("zone mydomain.com\n")
+            f.write(f"update delete {name[0]}.mydomain.com. A\n")
+            f.write(f"update add {name[0]}.mydomain.com. 3600 A {ip}\n")
+            f.write("show\n")
+            f.write("send\n")
+
+        run = sh.nsupdate(
+            "-k", "/etc/dyndns/Kdynamic.mydomain.com.+157+06067.key",
+            "-v", "/tmp/nsupdate"
+        )
+        if run.exit_code == 0:
+            print(f"Updated {name[0]}.mydomain.com to {ip}")
+        else:
+            print("nsupdate failed")
     else:
-      print "nsupdate failed"
-  else:
-    print "Invalid key"
+        print("Invalid key")
