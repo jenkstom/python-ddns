@@ -97,3 +97,8 @@ Note 2025-01-06: The code is updated for python 3, but the instructions here are
         http://mydomain.com/cgi-bin/dyndns?name=x&key=38472837&ip=10.0.0.1
 
  If you have https setup pointing to the same cgi-bin folder you can use that to be more secure.
+
+14. Once this is tested and working add the URI provided into a cron script and that DNS record will be updated automatically. Like this:
+
+    0 * * * * curl http://mydomain.com/cgi-bin/dyndns?name=x&key=38472837
+
